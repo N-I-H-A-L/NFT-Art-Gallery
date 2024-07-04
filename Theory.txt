@@ -1,0 +1,4 @@
+NFTs are uniquely identified by 2 things, the contract to which that NFT belongs and the tokenId of that NFT.
+If two NFTs belongs to different contracts they can have same tokenIds but NFTs of a single contract can never have same tokenId.
+
+Suppose there are two contracts, Contract A and Contract B, then NFT of A as well as NFT of B can have tokenId as 1 since they belong to different contracts. But Contract A can't mint two NFTs with the same tokenId let's say 1. If they will have same tokenId then they can't be called as NFTs since they won't be unique.
