@@ -107,4 +107,39 @@ contract NFTGallery is ReentrancyGuard {
         //Transfer listing price to owner (account which created NFTGallery contract).
         payable(owner).transfer(listingPrice);
     }
+
+    //Fetch all the unsold NFTs to be displayed on the frontend
+    function fetchNFTs() public view returns(Item[] memory) {
+        Item[] memory items = new Item[];
+
+        for(uint i = 0; i<itemIds; i++){
+            if(idToItem[i].sold == false) items.push(idToItem[i]);
+        }
+
+        return items;
+    }
+
+    //Fetch the NFTs owned by user
+    function fetchMyNFTs() public view returns(Item[] memory) {
+        Item[] memory items = new Item[];
+
+        for(uint i = 0; i<itemIds; i++){
+            //If owner of NFT is the user making calls to this function
+            if(idToItem[i].owner == msg.sender) items.push(idToItem[i]);
+        }
+
+        return items;
+    }
+
+    //Fetch all the NFTs created by user
+    function fetchCreatedNFTs() public view returns(Item[] memory) {
+        Item[] memory items = new Item[];
+
+        for(uint i = 0; i<itemIds; i++){
+            //If the account calling this function is the seller of this NFT
+            if(idToItem[i].seller == msg.sender) items.push(idToItem[i]);
+        }
+
+        return items;
+    }
 }
