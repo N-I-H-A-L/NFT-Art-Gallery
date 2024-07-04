@@ -7,4 +7,9 @@ In the code, you must've seen that when an NFT is listed on the Gallery, listing
 This Ether is held by the smart contract (NFTGallery contract, since createNFT is a method of NFTGallery contract) until you explicitly transfer it or use it within the contract.
 Until you transfer or use msg.value within your contract, it remains with the contract. It is essentially, the contract's ETH balance. 
 
+sample-test.js
+In this file, we're simulating real world transactions by writing code. 
+At first we're deploying the contracts, creating tokens, then listing those tokens in NFTGallery, then simulating the sale of those tokens. 
+The test accounts used for simulating the transactions are provided by Hardhat. 
+
 () -> used for typecasting in solidity

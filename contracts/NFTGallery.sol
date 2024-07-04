@@ -3,6 +3,7 @@ pragma solidity ^0.8.19;
 
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 
 contract NFTGallery is ReentrancyGuard {
     //To store ids and number of items sold on gallery
@@ -13,7 +14,7 @@ contract NFTGallery is ReentrancyGuard {
     address payable owner;
 
     //Fees for listing NFT on Gallery
-    uint256 listingPrice = 0.001 ether;
+    uint256 listingPrice = 0.002 ether;
 
     constructor() {
         //'payable' to make sure msg.sender can accept ether.
@@ -83,7 +84,7 @@ contract NFTGallery is ReentrancyGuard {
         //Transfer the NFT of contract, nftContract, whose token id is tokenId from msg.sender to NFT Gallery contract, that is, now Gallery will be the owner of that NFT.
         // address(this) refers to current contract's address
 
-        emit ItemCreated(itemId, nftContract, tokenId, msg.sender, address(0), price, false);
+        emit ItemCreated(currentItemId, nftContract, tokenId, payable(msg.sender), payable(address(0)), price, false);
     }
 
     function NFTSale(address nftContract, uint itemId) public payable nonReentrant { 
@@ -110,10 +111,19 @@ contract NFTGallery is ReentrancyGuard {
 
     //Fetch all the unsold NFTs to be displayed on the frontend
     function fetchNFTs() public view returns(Item[] memory) {
-        Item[] memory items = new Item[];
+        uint unsoldItemsCount = 0;
 
-        for(uint i = 0; i<itemIds; i++){
-            if(idToItem[i].sold == false) items.push(idToItem[i]);
+        for(uint i = 1; i<=itemIds; i++){
+            if(idToItem[i].sold == false) unsoldItemsCount++;
+        }
+
+        Item[] memory items = new Item[](unsoldItemsCount);
+        uint index = 0;
+        for(uint i = 1; i<=itemIds; i++){
+            if(idToItem[i].sold == false){
+                items[index] = idToItem[i];
+                index++;
+            }
         }
 
         return items;
@@ -121,25 +131,40 @@ contract NFTGallery is ReentrancyGuard {
 
     //Fetch the NFTs owned by user
     function fetchMyNFTs() public view returns(Item[] memory) {
-        Item[] memory items = new Item[];
+        uint count = 0;
 
-        for(uint i = 0; i<itemIds; i++){
-            //If owner of NFT is the user making calls to this function
-            if(idToItem[i].owner == msg.sender) items.push(idToItem[i]);
+        for(uint i = 1; i<=itemIds; i++){
+            if(idToItem[i].owner == msg.sender) count++;
         }
 
+        Item[] memory items = new Item[](count);
+        uint index = 0;
+        for(uint i = 1; i<=itemIds; i++){
+            //If owner of NFT is the user making calls to this function
+            if(idToItem[i].owner == msg.sender){
+                items[index] = idToItem[i];
+                index++;
+            }
+        }
         return items;
     }
 
     //Fetch all the NFTs created by user
     function fetchCreatedNFTs() public view returns(Item[] memory) {
-        Item[] memory items = new Item[];
-
-        for(uint i = 0; i<itemIds; i++){
-            //If the account calling this function is the seller of this NFT
-            if(idToItem[i].seller == msg.sender) items.push(idToItem[i]);
+        uint count = 0;
+        for(uint i = 1; i<=itemIds; i++){
+            if(idToItem[i].seller == msg.sender) count++;
         }
 
+        Item[] memory items = new Item[](count);
+        uint index = 0;
+        for(uint i = 1; i<=itemIds; i++){
+            //If the account calling this function is the seller of this NFT
+            if(idToItem[i].seller == msg.sender){
+                items[index] = idToItem[i];
+                index++;
+            }
+        }
         return items;
     }
 }

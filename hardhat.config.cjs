@@ -1,4 +1,5 @@
 require("@nomiclabs/hardhat-waffle");
+require("@nomiclabs/hardhat-ethers");
 
 const fs = require('fs');
 //Get the private key of your account from MetaMask extension. 
@@ -14,10 +15,9 @@ module.exports = {
     //   url: "https://rpc-mumbai.maticvigil.com",
     //   accounts: [process.env.privateKey], for specifying the account which is used for deploying smart contract.
     // }
-    mainnet: {},
   },
   solidity: {
-    version: "0.8.19",
+    version: "0.8.20",
     settings: {
       optimizer: {
         enabled: true,
