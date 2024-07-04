@@ -2,3 +2,9 @@ NFTs are uniquely identified by 2 things, the contract to which that NFT belongs
 If two NFTs belongs to different contracts they can have same tokenIds but NFTs of a single contract can never have same tokenId.
 
 Suppose there are two contracts, Contract A and Contract B, then NFT of A as well as NFT of B can have tokenId as 1 since they belong to different contracts. But Contract A can't mint two NFTs with the same tokenId let's say 1. If they will have same tokenId then they can't be called as NFTs since they won't be unique.
+
+In the code, you must've seen that when an NFT is listed on the Gallery, listingPrice is deducted from the Seller but is not credited to Owner of NFTGallery until a sale of the NFT is completed. So for the time duration between listing and selling where does the listing price (ETH) is stored?
+This Ether is held by the smart contract (NFTGallery contract, since createNFT is a method of NFTGallery contract) until you explicitly transfer it or use it within the contract.
+Until you transfer or use msg.value within your contract, it remains with the contract. It is essentially, the contract's ETH balance. 
+
+() -> used for typecasting in solidity

@@ -9,7 +9,7 @@ contract NFTGallery is ReentrancyGuard {
     uint256 private itemIds;
     uint256 private itemsSold;
 
-    //Owner of the NFT, to which the amount should be paid
+    //Owner of the NFTGallery, to which the amount should be paid
     address payable owner;
 
     //Fees for listing NFT on Gallery
@@ -17,6 +17,7 @@ contract NFTGallery is ReentrancyGuard {
 
     constructor() {
         //'payable' to make sure msg.sender can accept ether.
+        //The constructor will be called when the contract will be deployed thus, owner of the NFTGallery will be account which deployed the contract.
         owner = payable(msg.sender);
         itemIds = 0;
     }
@@ -72,7 +73,7 @@ contract NFTGallery is ReentrancyGuard {
             nftContract,
             tokenId,
             payable(msg.sender), //seller will be the user calling this function, that is msg.sender.
-            payable(address(0)), // Buyer is initially set to the zero address (0x0000000000000000000000000000000000000000). Can be assumed as NULL value.
+            payable(address(0)), // owner is initially set to the zero address (0x0000000000000000000000000000000000000000). Can be assumed as NULL value.
             price,
             false //not sold yet
         );
@@ -83,5 +84,27 @@ contract NFTGallery is ReentrancyGuard {
         // address(this) refers to current contract's address
 
         emit ItemCreated(itemId, nftContract, tokenId, msg.sender, address(0), price, false);
+    }
+
+    function NFTSale(address nftContract, uint itemId) public payable nonReentrant { 
+        uint price = idToItem[itemId].price;
+        uint tokenId = idToItem[itemId].tokenId;
+
+        require(msg.value == price, "Please submit the asking price in order to purchase.");
+
+        //Transfer price of NFT to seller of that NFT.
+        idToItem[itemId].seller.transfer(msg.value);
+
+        //Change ownership of token from NFTGallery to msg.sender (who initiated the sale).
+        IERC721(nftContract).transferFrom(address(this), msg.sender, tokenId);
+
+        //Modify owner of NFT in map (while typecasting it into payable)
+        idToItem[itemId].owner = payable(msg.sender);
+        idToItem[itemId].sold = true;
+
+        incrementSold();
+
+        //Transfer listing price to owner (account which created NFTGallery contract).
+        payable(owner).transfer(listingPrice);
     }
 }
