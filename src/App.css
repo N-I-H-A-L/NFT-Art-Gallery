@@ -1,0 +1,13 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    margin: 20px auto;
+    padding: 10px;
+    width: 80%;
+    display: flex;
+    gap: 2vw;
+    flex-wrap: wrap;
+}
